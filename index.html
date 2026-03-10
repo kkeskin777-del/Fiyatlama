@@ -37,7 +37,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pin-btn.del{font-size:18px;color:#5a8fa8;}
 .pin-btn.empty{background:transparent;border:none;cursor:default;pointer-events:none;}
 .pin-error{color:#4d96ff;font-size:13px;height:18px;text-align:center;}
-
 </style>
 </head>
 <body>
@@ -76,23 +75,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <div id="home-screen">
   <div class="home-logo">İş Araçları<small>Profesyonel Takip Sistemi</small></div>
-      <div class="widget-label">Bu Ay Net</div>
-      <div class="widget-value" id="w-net"><span class="widget-loading">···</span></div>
-      <div class="widget-sub" id="w-net-sub"></div>
-    </div>
-    <div class="widget w-urun">
-      <div class="widget-icon">🏷️</div>
-      <div class="widget-label">Ürün Sayısı</div>
-      <div class="widget-value" id="w-urun"><span class="widget-loading">···</span></div>
-      <div class="widget-sub">kayıtlı ürün</div>
-    </div>
-    <div class="widget w-gider">
-      <div class="widget-icon">💸</div>
-      <div class="widget-label">En Büyük Gider</div>
-      <div class="widget-value" id="w-gider"><span class="widget-loading">···</span></div>
-      <div class="widget-sub" id="w-gider-sub">bu ay</div>
-    </div>
-  </div>
   <div class="app-grid">
     <div class="app-card fiyat" onclick="openApp('fiyat.html')">
       <div class="app-icon">🏷️</div>
@@ -124,7 +106,9 @@ function goHome() {
   document.getElementById('home-screen').style.display = 'flex';
   document.getElementById('backBtn').style.display = 'none';
 }
+</script>
 
+<script>
 const PIN = '404041';
 let pinInput = '';
 
