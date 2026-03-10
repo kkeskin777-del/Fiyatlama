@@ -7,23 +7,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:     #0e0e14;
-  --bg2:    #13131c;
-  --surface:#1a1a26;
-  --surface2:#21212f;
-  --border: rgba(255,255,255,.07);
-  --border2:rgba(255,255,255,.12);
-  --text:   #f0f0f8;
-  --muted:  #7878a0;
-  --income: #3dd68c;   /* yeşil */
-  --income2:#1fba70;
-  --expense:#ff6b6b;   /* kırmızı */
+  --bg:     #050f1a;
+  --bg2:    #080f18;
+  --surface:#0a1a2a;
+  --surface2:#0d1f2d;
+  --border: rgba(0,212,255,.07);
+  --border2:rgba(0,212,255,.12);
+  --text:   #e0f4ff;
+  --muted:  #5a8fa8;
+  --income: #00ff9d;   /* yeşil */
+  --income2:#00d4aa;
+  --expense:#4d96ff;   /* kırmızı */
   --expense2:#e84545;
   --gold:   #ffd93d;
-  --purple: #c77dff;
+  --purple: #00d4ff;
   --blue:   #4cc9f0;
   --grad-income: linear-gradient(135deg,#3dd68c,#00b4d8);
-  --grad-expense:linear-gradient(135deg,#ff6b6b,#c77dff);
+  --grad-expense:linear-gradient(135deg,#4d96ff,#00d4ff);
   --grad-amber:  linear-gradient(135deg,#e6a817,#c47d0e);
   --kdv-red:     #c0392b;
   --grad-gold:   linear-gradient(135deg,#ffd93d,#ff9f1c);
@@ -111,7 +111,7 @@ header{
 }
 .period-badge{
   font-size:12px;font-weight:600;color:var(--purple);
-  background:rgba(199,125,255,.1);border:1px solid rgba(199,125,255,.2);
+  background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);
   border-radius:6px;padding:3px 10px;
 }
 
@@ -227,7 +227,7 @@ header{
   cursor:pointer;background:var(--surface2);
   border:1px solid var(--border);color:var(--muted);transition:all .18s;
 }
-.ytb.active,.ytb:hover{background:rgba(199,125,255,.12);color:var(--purple);border-color:rgba(199,125,255,.3);}
+.ytb.active,.ytb:hover{background:rgba(0,212,255,.12);color:var(--purple);border-color:rgba(0,212,255,.3);}
 
 /* ── AYLIK DETAY ── */
 .month-detail-header{
@@ -254,8 +254,8 @@ header{
   .modal-body{padding:20px;}
   .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
   .modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
-  .btn-edit{background:rgba(199,125,255,.1);color:var(--purple);border:1px solid rgba(199,125,255,.25);padding:6px 11px;border-radius:8px;font-size:12px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;}
-  .btn-edit:hover{background:rgba(199,125,255,.2);}
+  .btn-edit{background:rgba(0,212,255,.1);color:var(--purple);border:1px solid rgba(0,212,255,.25);padding:6px 11px;border-radius:8px;font-size:12px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;}
+  .btn-edit:hover{background:rgba(0,212,255,.2);}
   .btn-save{background:rgba(61,214,140,.12);color:var(--income);border:1px solid rgba(61,214,140,.25);}
   .btn-save:hover{background:rgba(61,214,140,.22);}
 
@@ -286,8 +286,8 @@ header{
   <div class="hdr-top">
     <div class="logo">Mali<span>Tablo</span> <em>Gelir & Gider Takibi</em></div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <div id="syncBar" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px 10px;font-size:11px;color:#7878a0;">
-        <span id="syncDot" style="width:7px;height:7px;border-radius:50%;background:#7878a0;flex-shrink:0;transition:background .4s;"></span>
+      <div id="syncBar" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px 10px;font-size:11px;color:#5a8fa8;">
+        <span id="syncDot" style="width:7px;height:7px;border-radius:50%;background:#5a8fa8;flex-shrink:0;transition:background .4s;"></span>
         <span id="syncLbl">Yükleniyor...</span>
       </div>
       <div class="filter-bar">
@@ -444,8 +444,8 @@ function syncDurum(tip, mesaj) {
   const dot = document.getElementById('syncDot');
   const lbl = document.getElementById('syncLbl');
   if(!dot || !lbl) return;
-  const renkler = {ok:'#3dd68c', hata:'#ff6b6b', bekle:'#ffd93d', mesgul:'#4d96ff'};
-  dot.style.background = renkler[tip] || '#7878a0';
+  const renkler = {ok:'#3dd68c', hata:'#4d96ff', bekle:'#ffd93d', mesgul:'#00ff9d'};
+  dot.style.background = renkler[tip] || '#5a8fa8';
   lbl.textContent = mesaj;
 }
 
