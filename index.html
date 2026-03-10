@@ -37,6 +37,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pin-btn.del{font-size:18px;color:#5a8fa8;}
 .pin-btn.empty{background:transparent;border:none;cursor:default;pointer-events:none;}
 .pin-error{color:#4d96ff;font-size:13px;height:18px;text-align:center;}
+
+.widgets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;max-width:520px;}
+.widget{background:#0d1f30;border:1px solid #1a3a50;border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;transition:all .3s;}
+.widget::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.widget.w-gelir::before{background:linear-gradient(135deg,#00ff9d,#00d4ff);}
+.widget.w-urun::before{background:linear-gradient(135deg,#00d4ff,#4d96ff);}
+.widget.w-gider::before{background:linear-gradient(135deg,#ff6b6b,#ffb347);}
+.widget-icon{font-size:18px;}
+.widget-label{font-size:9px;color:#5a8fa8;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+.widget-value{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#e0f4ff;line-height:1.2;}
+.widget-value.pos{color:#00ff9d;}
+.widget-value.neg{color:#ff6b6b;}
+.widget-sub{font-size:9px;color:#5a8fa8;}
+.widget-loading{color:#5a8fa8;font-size:11px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:1;}}
 </style>
 </head>
 <body>
@@ -75,6 +90,26 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <div id="home-screen">
   <div class="home-logo">İş Araçları<small>Profesyonel Takip Sistemi</small></div>
+  <div class="widgets" id="widgets">
+    <div class="widget w-gelir">
+      <div class="widget-icon">📈</div>
+      <div class="widget-label">Bu Ay Net</div>
+      <div class="widget-value" id="w-net"><span class="widget-loading">···</span></div>
+      <div class="widget-sub" id="w-net-sub"></div>
+    </div>
+    <div class="widget w-urun">
+      <div class="widget-icon">🏷️</div>
+      <div class="widget-label">Ürün Sayısı</div>
+      <div class="widget-value" id="w-urun"><span class="widget-loading">···</span></div>
+      <div class="widget-sub">kayıtlı ürün</div>
+    </div>
+    <div class="widget w-gider">
+      <div class="widget-icon">💸</div>
+      <div class="widget-label">En Büyük Gider</div>
+      <div class="widget-value" id="w-gider"><span class="widget-loading">···</span></div>
+      <div class="widget-sub" id="w-gider-sub">bu ay</div>
+    </div>
+  </div>
   <div class="app-grid">
     <div class="app-card fiyat" onclick="openApp('fiyat.html')">
       <div class="app-icon">🏷️</div>
@@ -108,6 +143,82 @@ function goHome() {
 }
 </script>
 
+
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwoljMq2NJUv8EWRUHil_BvnTceNOsXlLM9Mih8_jFREQRe_71U5MSyaa8a7jXMvOXw/exec';
+
+function fmt(n){ return (Math.round(n*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+
+async function loadWidgets() {
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 6000);
+    const r = await fetch(GAS_URL + '?action=getall', { signal: ctrl.signal });
+    const d = await r.json();
+    if(!d.ok || !d.value) return;
+    const all = d.value;
+
+    // Ürün sayısı
+    const urunler = all['fhp_urunler'] || [];
+    const wUrun = document.getElementById('w-urun');
+    if(wUrun) {
+      wUrun.textContent = urunler.length;
+      wUrun.className = 'widget-value';
+    }
+
+    // Bu ay net gelir/gider
+    const gelirler = all['mt_gelir'] || [];
+    const giderler = all['mt_gider'] || [];
+    const now = new Date();
+    const ay = now.getMonth()+1;
+    const yil = now.getFullYear();
+
+    const ayGelir = gelirler.filter(g => {
+      const t = g.tarih || '';
+      return t.startsWith(yil+'-'+(ay<10?'0'+ay:ay));
+    }).reduce((s,g) => s + (parseFloat(g.tutar)||0), 0);
+
+    const ayGider = giderler.filter(g => {
+      const t = g.tarih || '';
+      return t.startsWith(yil+'-'+(ay<10?'0'+ay:ay));
+    }).reduce((s,g) => s + (parseFloat(g.tutar)||0), 0);
+
+    const net = ayGelir - ayGider;
+    const wNet = document.getElementById('w-net');
+    const wNetSub = document.getElementById('w-net-sub');
+    if(wNet) {
+      wNet.textContent = (net >= 0 ? '+' : '') + fmt(net) + ' ₺';
+      wNet.className = 'widget-value ' + (net >= 0 ? 'pos' : 'neg');
+    }
+    if(wNetSub) wNetSub.textContent = 'G:' + fmt(ayGelir) + ' / G:' + fmt(ayGider);
+
+    // Bu ayki en büyük gider
+    const ayGiderler = giderler.filter(g => {
+      const t = g.tarih || '';
+      return t.startsWith(yil+'-'+(ay<10?'0'+ay:ay));
+    });
+    const wGider = document.getElementById('w-gider');
+    const wGiderSub = document.getElementById('w-gider-sub');
+    if(ayGiderler.length > 0) {
+      const enBuyuk = ayGiderler.reduce((a,b) => (parseFloat(a.tutar)||0) > (parseFloat(b.tutar)||0) ? a : b);
+      if(wGider) {
+        wGider.textContent = fmt(parseFloat(enBuyuk.tutar)||0) + ' ₺';
+        wGider.className = 'widget-value neg';
+      }
+      if(wGiderSub) wGiderSub.textContent = (enBuyuk.aciklama||enBuyuk.kategori||'').slice(0,14);
+    } else {
+      if(wGider) { wGider.textContent = '—'; wGider.className = 'widget-value'; }
+      if(wGiderSub) wGiderSub.textContent = 'bu ay kayıt yok';
+    }
+
+  } catch(e) {
+    ['w-net','w-urun','w-gider'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) { el.textContent = '—'; el.className = 'widget-value'; }
+    });
+  }
+}
+
+// PIN girilince widget yükle
 <script>
 const PIN = '404041';
 let pinInput = '';
@@ -121,6 +232,7 @@ function pinPress(d) {
       if(pinInput === PIN) {
         document.getElementById('pin-screen').style.display = 'none';
         sessionStorage.setItem('unlocked','1');
+        loadWidgets();
       } else {
         document.getElementById('pin-error').textContent = 'Yanlış PIN, tekrar deneyin';
         pinInput = '';
@@ -141,6 +253,7 @@ function pinDel() {
 // Oturumda zaten girilmişse direkt geç
 if(sessionStorage.getItem('unlocked') === '1') {
   document.getElementById('pin-screen').style.display = 'none';
+  loadWidgets();
 }
 </script>
 
