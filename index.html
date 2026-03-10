@@ -533,7 +533,7 @@ let editingIdx  = null;
 let cnt = {ah:0, dis:0, sabit:0, kargo:0, hm:0, plat:0};
 
 // ════════════ GOOGLE SHEETS SYNC ════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyyZUGEZ4KaFIpPn9SY9p9usPF_8vVhNbHxWJVuGtT2IdXe_-k26p-jDPYLhFLKpf8R/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwoljMq2NJUv8EWRUHil_BvnTceNOsXlLM9Mih8_jFREQRe_71U5MSyaa8a7jXMvOXw/exec';
 let _syncTimer = null;
 let _syncQueue = {};
 let _syncing   = false;
@@ -563,8 +563,12 @@ async function syncGonder() {
   syncDurum('mesgul', 'Senkronize ediliyor...');
   try {
     for(const [key, value] of Object.entries(kuyruk)) {
-      const encoded = encodeURIComponent(JSON.stringify(value));
-      await fetch(`${GAS_URL}?action=set&key=${encodeURIComponent(key)}&value=${encoded}`);
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type':'text/plain'},
+        body: JSON.stringify({key, value})
+      });
     }
     syncDurum('ok', '☁️ Senkronize');
   } catch(e) {
